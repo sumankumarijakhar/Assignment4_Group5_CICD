@@ -1,0 +1,17 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+
+    - name: Uninstall Jenkins release
+      shell: helm uninstall jenkins -n jenkins
+      ignore_errors: yes
+
+    - name: Delete Jenkins namespace
+      shell: kubectl delete ns jenkins
+      ignore_errors: yes
+
+    - name: Remove Jenkins repo
+      shell: helm repo remove jenkins
+      ignore_errors: yes

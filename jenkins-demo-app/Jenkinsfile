@@ -1,0 +1,20 @@
+pipeline {
+    agent any
+    stages {
+        stage('Clone') {
+            steps {
+                git 'https://github.com/octocat/Hello-World.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building...'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo '✅ All tests passed!'
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+
+    - name: Install Helm if not already installed
+      shell: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      args:
+        executable: /bin/bash
+      register: helm_install
+      changed_when: "'Helm v3' in helm_install.stdout or 'already' in helm_install.stdout"
+
+    - name: Add Jenkins Helm repo
+      shell: helm repo add jenkins https://charts.jenkins.io && helm repo update
+
+    - name: Create namespace for Jenkins
+      shell: kubectl create ns jenkins
+      ignore_errors: yes
+
+    - name: Install Jenkins via Helm
+      shell: >
+        helm install jenkins jenkins/jenkins --namespace jenkins
+        --set controller.serviceType=NodePort
+        --set controller.nodePort=32000
+        --set controller.admin.username=admin
+        --set controller.admin.password=admin123
+
+    - name: Print Jenkins URL and credentials
+      debug:
+        msg: |
+          Jenkins installed!
+          URL: http://<YOUR_NODE_IP>:32000
+          Username: admin
+          Password: admin123
